@@ -13,13 +13,14 @@ int main (int argc, char* argv[]) {
         while (true)
         {
             std::cout << "> ";
-            std::getline(std::cin, line);
+            std::getline(std::cin, line);           // READ
             if (line == "")
             {
                 break;
             }
-            std::cout << eval(line + "\n") << std::endl;
-        }
+            auto evaled_value = eval(line + "\n");  // EVAL
+            std::cout << evaled_value << std::endl; // PRINT
+        }                                           // LOOP
         std::cout << "Qutting... Good bye" << std::endl;
     } else if (argc == 2)
     {
