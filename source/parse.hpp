@@ -34,12 +34,10 @@ const std::map<TokenType, int> prec_table { {TokenType::Plus, 1}, {TokenType::Mi
 class Parser
 {
     public:
-    Parser() : program{} {};
+    Parser() {};
 
     std::shared_ptr<CSTNode> parse_line(const std::vector<Token>&);
     std::shared_ptr<CSTNode> parse_expression(std::vector<Token>::const_iterator, const std::vector<Token>::const_iterator, int precedence, std::shared_ptr<CSTNode> prev);
-
-    std::vector<std::shared_ptr<CSTNode>> program;
 
     private:
     std::shared_ptr<CSTNode> expect(std::set<TokenType>, const Token);

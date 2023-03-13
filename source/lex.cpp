@@ -49,11 +49,12 @@ std::vector<Token> Lexer::lex(std::string text)
 {
     input_text += text;
     std::vector<Token> tokens{};
-    Token token;
+    Token token = next();
 
-    while ((token = next()).type != TokenType::Eol)
+    while (token.type != TokenType::Eol && token.type != TokenType::Eof)
     {
         tokens.push_back(token);
+        token = next();
     }
     return tokens;
 }
@@ -142,4 +143,9 @@ Token Lexer::lexfloat()
     --look;
     Token next_token = build_token(TokenType::Float, std::string(input_text.substr(curr_pos, look - curr_pos + 1)));
     return next_token;
+}
+
+std::ostream& operator<<(std::ostream& os, const Token& t)
+{
+    return os << type_name(t.type) << "{" << t.value << "} ";
 }

@@ -12,9 +12,9 @@ typedef struct
 {
     TokenType type;
     std::string value;
-    int line;
-    int start;
-    int end;
+    unsigned int line;
+    unsigned int start;
+    unsigned int end;
 } Token;
 
 class Lexer {
@@ -27,15 +27,16 @@ class Lexer {
 
 
     private:
-    int curr_pos;
-    int look;
-    int line;
-    int offset;
     std::string input_text;
+    unsigned int curr_pos;
+    unsigned int look;
+    unsigned int line;
+    unsigned int offset;
 
     Token lexnum();
     Token lexfloat();
 };
 
+std::ostream& operator<<(std::ostream& os, const Token& node);
 
 #endif

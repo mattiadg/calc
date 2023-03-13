@@ -3,6 +3,7 @@
 
 #include "parse.hpp"
 
+
 std::shared_ptr<CSTNode> Parser::parse_line(const std::vector<Token> & tokens)
 {
     return parse_expression(tokens.begin(), tokens.end(), 0, nullptr);
