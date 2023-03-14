@@ -6,6 +6,14 @@
 
 std::shared_ptr<CSTNode> Parser::parse_line(const std::vector<Token> & tokens)
 {
+    for (auto t : tokens)
+    {
+        if(t.type == TokenType::Err)
+        {
+            std::cout << "Error for token \"" + t.value + "\" at " + std::to_string(t.line) + ":" + std::to_string(t.start) + "-" + std::to_string(t.end);
+            exit(1);
+        }
+    }
     return parse_expression(tokens.begin(), tokens.end(), 0, nullptr);
 }
 

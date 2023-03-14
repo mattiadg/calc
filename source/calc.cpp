@@ -7,6 +7,8 @@
 
 
 int main (int argc, char* argv[]) {
+    Lexer lexer;
+    Parser parser;
     if (argc == 1)
     {
         std::string line;
@@ -18,14 +20,18 @@ int main (int argc, char* argv[]) {
             {
                 break;
             }
-            auto evaled_value = eval(line + "\n");  // EVAL
+            auto tokens = lexer.lex(line + "\n");
+            auto tree = parser.parse_line(tokens);
+            auto evaled_value = eval(tree);  // EVAL
             std::cout << evaled_value << std::endl; // PRINT
         }                                           // LOOP
         std::cout << "Qutting... Good bye" << std::endl;
     } else if (argc == 2)
     {
         std::string cmd {argv[1]};
-        std::cout << eval(cmd + "\n") << std::endl;
+        auto tokens = lexer.lex(cmd + "\n");
+        auto tree = parser.parse_line(tokens);
+        auto evaled_value = eval(tree);
     }
     return 0;
 }
