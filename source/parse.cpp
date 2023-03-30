@@ -6,6 +6,7 @@
 
 std::shared_ptr<CSTNode> Parser::parse_line(const std::vector<Token> & tokens)
 {
+    auto queue = Queue();
     for (auto t : tokens)
     {
         if(t.type == TokenType::Err)
@@ -13,46 +14,56 @@ std::shared_ptr<CSTNode> Parser::parse_line(const std::vector<Token> & tokens)
             std::cout << "Error for token \"" + t.value + "\" at " + std::to_string(t.line) + ":" + std::to_string(t.start) + "-" + std::to_string(t.end);
             exit(1);
         }
+        queue.add(t);
     }
-    return parse_expression(tokens.begin(), tokens.end(), 0, nullptr);
+    return parse_expression(queue, 0, nullptr);
 }
 
-std::shared_ptr<CSTNode> Parser::parse_expression(std::vector<Token>::const_iterator tokens_it, std::vector<Token>::const_iterator tokens_end, int precedence, std::shared_ptr<CSTNode> prev)
+std::shared_ptr<CSTNode> Parser::parse_expression(Queue& queue, int precedence, std::shared_ptr<CSTNode> prev)
 {
-    if(tokens_it != tokens_end)
+    if(!queue.empty())
     {
-        auto num_node = expect(nums, *tokens_it++);
-        if(tokens_it == tokens_end)
+        std::shared_ptr<CSTNode> num_node;
+        if (auto lparen_node = expect(lparen, queue.peek()); lparen_node != nullptr)
         {
-            if (prev != nullptr)
+            num_node = parse_inparens(queue);  
+        } else
+        {
+            num_node = expect(nums, *queue.next());
+        }
+        if(queue.empty())
+        {
+            if(prev != nullptr)
             {
-                append_right(prev, num_node);
-                return prev;
+                prev->children.push_back(num_node);
+            } else 
+            {
+                prev = num_node;
             }
-            
+            return prev;
         }
-        auto op_node = expect(ops, *tokens_it++);
-        std::shared_ptr<CSTNode> top;
-        auto curr_prec = prec_table.at(op_node->lex_type);
 
-        if(prev == nullptr)
+        if(auto rparen_node = expect(rparen, queue.peek()); rparen_node != nullptr)
         {
-            op_node->children.push_back(num_node);
-            top = op_node;
-        } else if (curr_prec > precedence)
-        {
-            append_right(prev, op_node);
-            op_node->children.push_back(num_node);
-            top = prev;
-        } else {
-            append_right(prev, num_node);
-            op_node->children.push_back(prev);
-            top = op_node;
+            prev->children.push_back(num_node);
+            return prev;
         }
-        return parse_expression(tokens_it, tokens_end, curr_prec, top);
+        auto op_node = expect(ops, *queue.next());
+        auto curr_prec = prec_table.at(op_node->lex_type);
+        auto top = concat_nodes(prev, op_node, num_node, curr_prec > precedence);
+
+        return parse_expression(queue, curr_prec, top);
     } else {
         return nullptr;
     }
+}
+
+std::shared_ptr<CSTNode> Parser::parse_inparens(Queue& queue)
+{
+    auto lparen_node = expect(lparen, *queue.next());
+    auto num_node = parse_expression(queue, prec_table.at(lparen_node->lex_type), nullptr);
+    auto rparen_node = expect(rparen, *queue.next());
+    return num_node;
 }
 
 std::shared_ptr<CSTNode> Parser::expect(std::set<TokenType> valid_types, const Token token)
@@ -129,4 +140,24 @@ std::ostream& operator<<(std::ostream& os, const CSTNode& node)
     }
     os << "]";
     return os;
+}
+
+std::shared_ptr<CSTNode> Parser::concat_nodes(std::shared_ptr<CSTNode> par1, std::shared_ptr<CSTNode> par2, std::shared_ptr<CSTNode> child, bool greater_than)
+{
+    std::shared_ptr<CSTNode> top;
+    if(par1 == nullptr)
+    {
+        par2->children.push_back(child);
+        top = par2;
+    } else if (greater_than)
+    {
+        append_right(par1, par2);
+        par2->children.push_back(child);
+        top = par1;
+    } else {
+        append_right(par1, child);
+        par2->children.push_back(par1);
+        top = par2;
+    }
+    return top;
 }

@@ -32,6 +32,7 @@ int main (int argc, char* argv[]) {
         auto tokens = lexer.lex(cmd + "\n");
         auto tree = parser.parse_line(tokens);
         auto evaled_value = eval(tree);
+        std::cout << evaled_value << std::endl; // PRINT
     }
     return 0;
 }

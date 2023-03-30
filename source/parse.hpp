@@ -9,6 +9,7 @@
 #include <vector>
 
 #include "lex.hpp"
+#include "queue.hpp"
 
 
 enum class CSTType {Num, Op};
@@ -28,8 +29,10 @@ std::string cst_to_str(CSTType);
 
 const std::set<TokenType> nums {TokenType::Int, TokenType::Float};
 const std::set<TokenType> ops {TokenType::Plus, TokenType::Minus, TokenType::Mul, TokenType::Div};
+const std::set<TokenType> lparen {TokenType::LParen};
+const std::set<TokenType> rparen {TokenType::RParen};
 
-const std::map<TokenType, int> prec_table { {TokenType::Plus, 1}, {TokenType::Minus, 1}, {TokenType::Mul, 2}, {TokenType::Div, 2} };
+const std::map<TokenType, int> prec_table { {TokenType::Plus, 1}, {TokenType::Minus, 1}, {TokenType::Mul, 2}, {TokenType::Div, 2}, {TokenType::LParen, 0}, {TokenType::RParen, 5}};
 
 class Parser
 {
@@ -37,11 +40,13 @@ class Parser
     Parser() {};
 
     std::shared_ptr<CSTNode> parse_line(const std::vector<Token>&);
-    std::shared_ptr<CSTNode> parse_expression(std::vector<Token>::const_iterator, const std::vector<Token>::const_iterator, int precedence, std::shared_ptr<CSTNode> prev);
+    std::shared_ptr<CSTNode> parse_expression(Queue& queue, int precedence, std::shared_ptr<CSTNode> prev);
 
     private:
     std::shared_ptr<CSTNode> expect(std::set<TokenType>, const Token);
     void append_right(std::shared_ptr<CSTNode>, std::shared_ptr<CSTNode>);
+    std::shared_ptr<CSTNode> concat_nodes(std::shared_ptr<CSTNode>, std::shared_ptr<CSTNode>, std::shared_ptr<CSTNode>, bool);
+    std::shared_ptr<CSTNode> parse_inparens(Queue& queue);
 };
 
 std::ostream& operator<<(std::ostream& os, const CSTNode& node);
