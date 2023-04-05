@@ -35,7 +35,7 @@ std::shared_ptr<CSTNode> Parser::parse_expression(Queue& queue, int precedence, 
         {
             if(prev != nullptr)
             {
-                prev->children.push_back(num_node);
+                append_right(prev, num_node);
             } else 
             {
                 prev = num_node;
