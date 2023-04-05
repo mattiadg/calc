@@ -23,6 +23,14 @@ add_executable(
   source/lex.cpp
   source/eval.cpp
 )
+add_executable(
+  calc
+  source/calc.cpp
+  source/parse.cpp
+  source/queue.cpp
+  source/lex.cpp
+  source/eval.cpp
+)
 target_link_libraries(
   eval_test
   GTest::gtest_main
