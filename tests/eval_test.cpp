@@ -21,4 +21,6 @@ TEST(End2End_Test, Expect_Eval)
     EXPECT_EQ(eval_string(std::string("4 / (2 - 1) * 3.0")), "12.000000");
     EXPECT_EQ(eval_string(std::string("(2 + 3) * 2")), "10");
     EXPECT_EQ(eval_string(std::string("2 + 3 * 2")), "8");
+    EXPECT_EQ(eval_string(std::string("4 - 3 * 1")), "1");
+    EXPECT_EQ(eval_string(std::string("(2 + 3) - (4 - 3 * 1) * (2 / 1)")), "3");
 }

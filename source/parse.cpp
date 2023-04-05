@@ -45,7 +45,7 @@ std::shared_ptr<CSTNode> Parser::parse_expression(Queue& queue, int precedence, 
 
         if(auto rparen_node = expect(rparen, queue.peek()); rparen_node != nullptr)
         {
-            prev->children.push_back(num_node);
+            append_right(prev, num_node);
             return prev;
         }
         auto op_node = expect(ops, *queue.next());
