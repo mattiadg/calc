@@ -16,6 +16,18 @@ $ cmake -S . -B build && cmake --build build
 ```
 
 the executables will be under the `build` folder.
+
+## Ideas for Improvement
+
+Try the following to make practice with C++ and interpreters:  
+- Improve error messages (currently only partly implemented in the Lexer)
+- Use `ans` to refer to the latest expression result
+- Add built/in functions, for instance trigonometric functions
+- Add possibility of user-defined functions
+- Add vector or matrix arythmetic
+
+The more functionalities added and the more the resulting language looks like an actual programming language.
+
 ## Example
 ```Bash
 $ ./calc "(2 + 3) * 7"
